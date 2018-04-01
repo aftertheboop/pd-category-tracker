@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package PD Category Tracker
  */
@@ -12,17 +11,13 @@ Author URI: http://pitchdark.co.za
 License: Private
 Text Domain: pd-category-tracker
 */
-
-
 add_action('wp_footer', 'send_event');
-
 function send_event() {
-    
-    $analytics_obj = 'wppas_ga';
-    
+        
     if(is_archive()) {
         // Get the name of the archive
         $archive_type = get_the_archive_title();
+        $analytics_obj = '__gaTracker';
                         
         echo '<script>
         function sendAnalyticsEvent() {
@@ -53,9 +48,11 @@ sendAnalyticsEvent();
     if(is_single()) {
         // Set the parent category
         $parent_cat = 16;
+        $analytics_obj = '__gaTracker';
         
         // Get all child categories of a parent
-        $categories = get_categories(array('child_of' => $parent_cat));
+        $categories = get_categories(array('object_ids' => array(get_the_ID()),
+                                           'child_of' => $parent_cat));
         
         echo '<script>
         function sendAnalyticsEvent() {
@@ -71,7 +68,7 @@ sendAnalyticsEvent();
             hitType: "event",
             eventCategory: "wp category statistics",
             eventAction: "impressions",
-            eventLabel: "' . $cat->name . '"
+            eventLabel: "Category: ' . $cat->name . '"
         }
         // console.log(obj)
             
